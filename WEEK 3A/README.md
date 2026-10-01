@@ -1,1 +1,17 @@
+APPROACH
 
+In this assignment, I used the movie rating survey data collected from eight participants. The dataset contains participant information, movie titles, genres, and ratings from 1–5, including some missing ratings.
+
+My approach was to implement the Global Baseline Estimate recommendation algorithm in R. I first calculated the global mean rating, followed by each movie's average rating and its adjustment from the global mean. I then use the participant's rating behavior to calculate the user adjustment and combine these values to estimate a missing movie rating.
+
+
+RESEARCH QUESTIONS
+What is the overall average rating across all movies?
+Which movies have the highest and lowest adjustments from the global mean?
+Can the Global Baseline Estimate be used to predict a participant's missing movie rating?
+How do the movie adjustment and user adjustment contribute to the final recommendation?
+CONCLUSION AND ANALYTICS FINDINGS
+
+The analysis produced a global mean rating of 4.18. Black Panther had the highest positive movie adjustment at approximately +0.39, while See had the largest negative adjustment at approximately -0.68.
+
+These results show how individual movie ratings differ from the overall average. By combining the global mean, movie adjustment, and user adjustment, the Global Baseline Estimate can be used to predict a missing rating and generate a movie recommendation.
