@@ -1,0 +1,162 @@
+---
+title: "Assignment 3B-Window Functions Code Base"
+author: "Kingsley Kojo Kpoku"
+format: html
+editor: visual
+---
+
+## LOAD THE R PACKAGES
+
+```{r}
+
+
+library(readxl)
+library(dplyr)
+library(lubridate)
+library(slider)
+library(ggplot2)
+```
+
+## IMPORT THE TWO DATASETS
+
+```{r}
+file.choose()
+
+nvda <- read_excel("C:\\Users\\kingk\\OneDrive\\Documents\\CUNY MASTERS PROGRAM-DATA SCIENCE\\Data Acquistion & Management 607\\Assignments\\Assignment - Week 3\\3B\\NVIDIA.xlsx")
+
+tsla <-read_excel("C:\\Users\\kingk\\OneDrive\\Documents\\CUNY MASTERS PROGRAM-DATA SCIENCE\\Data Acquistion & Management 607\\Assignments\\Assignment - Week 3\\3B\\TSLA.xlsx")
+```
+
+## CHECKING THE FILES
+
+```{r}
+
+glimpse(tsla)
+
+glimpse(nvda)
+```
+
+## KEEPING THE INFO NEEDED
+
+```{r}
+tsla <- tsla %>%
+  select(Date, stock_close)
+
+nvda <- nvda %>%
+  select(Date, stock_close)
+
+## RENAMING THE COLUMNS TSLA AND NVDA
+tsla <- tsla %>%
+  rename(
+    date = Date,
+    price = stock_close
+  )
+
+nvda <- nvda %>%
+  rename(
+    date = Date,
+    price = stock_close
+  )
+```
+
+## WHAT EACH STOCKS REPRESENTS
+
+```{r}
+tsla <- tsla %>%
+  mutate(item = "TSLA")
+
+tsla
+
+nvda <- nvda%>%
+  mutate(item="NVDA")
+
+nvda
+```
+
+## COMBINING THE TWO DATASETS
+
+```{r}
+
+stock_data<- bind_rows(tsla,nvda)
+
+stock_data
+
+## DATE FUNCTION ENSURE R READS THE DATE AS DATE
+
+stock_data <- stock_data %>%
+  mutate(date = as.Date(date))
+
+str(stock_data)
+```
+
+## SORTING THE DATA
+
+```{r}
+
+stock_data <- stock_data%>%
+  arrange(item,date)
+
+stock_data
+
+## CREATING THE YEAR COLUMN
+
+stock_data <- stock_data %>%
+  mutate(year = year(date))
+
+stock_data
+
+```
+
+## CALCULATE THE YTD AVERAGE
+
+```{r}
+
+stock_data <- stock_data %>%
+  group_by(item, year) %>%
+  mutate(
+    ytd_average = cummean(price)
+  ) %>%
+  ungroup()
+
+stock_data
+```
+
+## CALCULATE THE SIX-DAY MOVING AVERAGE
+
+```{r}
+
+stock_data <- stock_data %>%
+  group_by(item) %>%
+  mutate(
+    six_day_average = slide_dbl(
+      price,
+      mean,
+      .before = 5,
+      .complete = TRUE
+    )
+  ) %>%
+  ungroup()
+
+stock_data
+```
+
+## VISUALIZATION 
+
+```{r}
+
+ggplot(stock_data, aes(x = date)) +
+  geom_line(
+    aes(y = price, linetype = "Actual Price")
+  ) +
+  geom_line(
+    aes(y = six_day_average, linetype = "6-Day Moving Average")
+  ) +
+  facet_wrap(~item, scales = "free_y") +
+  labs(
+    title = "Stock Prices and Six-Day Moving Averages",
+    x = "Date",
+    y = "Price",
+    linetype = "Measure"
+  ) +
+  theme_minimal()
+```
