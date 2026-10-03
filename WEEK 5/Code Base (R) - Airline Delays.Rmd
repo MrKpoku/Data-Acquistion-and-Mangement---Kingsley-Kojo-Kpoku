@@ -1,0 +1,185 @@
+---
+title: "Week 5 Assignment - Airline Delays"
+author: "KINGSLEY KPOKU"
+date: "`r Sys.Date()`"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+
+## LOADING MY LIBRARIES
+
+```{r}
+library(readr)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+```
+
+## IMPORTING THE DATA
+
+```{r}
+airline_data <- read_csv(file.choose())
+
+head(airline_data)
+
+glimpse(airline_data)
+```
+
+## CHECKING FOR MISSING DATA
+
+```{r}
+colSums(is.na(airline_data))
+```
+## CONVERTING THE DATA COLUMNS
+
+```{r}
+airline_long <- airline_data %>%
+  pivot_longer(
+    cols = los_angeles:seattle,
+    names_to = "city",
+    values_to = "flights"
+  )
+
+## DATA TRANSFORMED FROM WIDE TO LONG FORMAT
+
+head(airline_long)
+
+```
+
+## COUNT ANALYSIS
+
+```{r}
+flight_counts <- airline_long %>%
+  group_by(airline, status) %>%
+  summarise(
+    total_flights = sum(flights),
+    .groups = "drop"
+  )
+
+flight_counts
+
+```
+
+## CALCULATE OVERALL DELAY PERCENTAGE
+
+```{r}
+overall_delay <- airline_long %>%
+  group_by(airline) %>%
+  summarise(
+    total_flights = sum(flights),
+    delayed_flights = sum(flights[status == "Delayed"]),
+    delay_percentage = round(
+      delayed_flights / total_flights * 100,
+      2
+    ),
+    .groups = "drop"
+  )
+
+overall_delay
+
+## Alaksa airline has a higher overall % delay (13.27%) compared to AM_West(10.89%), however considering the fact that AM_west has had 3,450 more flights than Alaska and still manage for have a lower delay % is outstanding. Alaska has a lot to learn from AM_West
+
+```
+
+## VISUALIZATION 
+
+```{r}
+ggplot(
+  overall_delay,
+  aes(x = airline, y = delay_percentage)
+) +
+  geom_col() +
+  labs(
+    title = "Overall Flight Delay Percentage by Airline",
+    x = "Airline",
+    y = "Delay Percentage"
+  ) +
+  theme_minimal()
+
+## "The overall comparison shows that Alaska had a higher percentage of delayed flights than AM West. Alaska had approximately 13.27% of flights delayed, compared with approximately 10.89% for AM West. I used percentages instead of only comparing the number of delayed flights because the two airlines had different total numbers of flights."
+
+```
+
+## AIRLINE COMPARISM ACROSS CITIES
+
+```{r}
+city_delay <- airline_long %>%
+  group_by(airline, city) %>%
+  summarise(
+    total_flights = sum(flights),
+    delayed_flights = sum(flights[status == "Delayed"]),
+    delay_percentage = delayed_flights / total_flights * 100,
+    .groups = "drop"
+  )
+
+city_delay
+
+## 
+```
+
+
+## CITY TO CITY COMPARISON GRAPH
+
+```{r}
+ggplot(
+  city_delay,
+  aes(
+    x = city,
+    y = delay_percentage,
+    fill = airline
+  )
+) +
+  geom_col(position = "dodge") +
+  labs(
+    title = "Flight Delay Percentage by City and Airline",
+    x = "City",
+    y = "Delay Percentage",
+    fill = "Airline"
+  ) +
+  theme_minimal()
+
+## Ok i have learnt here not to conclude on analysis when i havent gone indepth, the city to city comparism makes it clear alaska isnt doing very bad. the graph makes it very clear that alaska out-performs AM_West. AM_West overall better % peformance can be attributed to Phoenix total flights (5255) while alaska records (233) for phoenix. That is a (5,022) discrepancy.
+```
+
+
+## FURTHER ANALYSIS ON DISCREPANCY
+
+```{r}
+city_comparison <- city_delay %>%
+  select(airline, city, delay_percentage) %>%
+  pivot_wider(
+    names_from = airline,
+    values_from = delay_percentage
+  )
+
+city_comparison
+
+## alaska actually outperforms AM_West in city to city comparisms.
+
+```
+
+## EXPLANATION TO DISCREPANCY
+
+```{r}
+## overall it was observed that AM_West had a better % delay than Alaska. And one crucial lesson i learnt today is not to conclude on general or surface analysis when you have not gone in-depth. Because Upon in-depth analysis (city to city) i discovered that i had it all wrong. Alaska Airline outperformed AM_West in every individual city. So i had one major question and that was to try to understand why Alaska airlines have an overall poor % delay. Line 103 solved the puzzle. AM West has a particularly large number of flights in Phoenix, which has a relatively lower delay percentage for AM West. This difference in flight distribution affects the overall calculation and causes the overall result to differ from the individual city comparisons.
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
