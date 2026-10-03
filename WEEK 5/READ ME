@@ -1,1 +1,21 @@
 
+APPROACH
+For this assignment, I will work with flight arrival data for Alaska Airlines and AM West across five cities: Los Angeles, Phoenix, San Diego, San Francisco, and Seattle. The dataset contains the number of flights that were either on time or delayed for each airline and city.
+
+DATA SOURCE
+The data was recreated from the flight-delay dataset provided for the assignment. I organized the data in PostgreSQL and exported the table as a CSV file named airline_performance.csv. The original data is structured in a wide format, with each city represented as a separate column.
+
+PLANNED APPROACH
+Explore the data — inspect the dataset structure and check for missing values.
+
+Tidy the data — transform the original wide format into long format using pivot_longer().
+
+Calculate flight counts — use dplyr to calculate total and delayed flights for each airline.
+
+Calculate percentages — compare delay percentages overall and across the five cities.
+
+Visualize the data — use tables and ggplot2 charts to present the comparisons.
+
+Investigate the differences — examine why the overall comparison may differ from the city-by-city comparison, including how flight volumes are distributed across cities.
+
+The results and findings will be presented later in the analysis and conclusion sections
