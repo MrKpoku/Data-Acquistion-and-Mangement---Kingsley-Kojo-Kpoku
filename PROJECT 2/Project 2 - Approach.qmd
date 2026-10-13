@@ -1,0 +1,34 @@
+---
+title: "Project 2 Approach - Real Estate in New York"
+author: "Kingsley Kojo Kpoku"
+format: html
+editor: visual
+---
+
+## APPROACH
+
+For this assignment, I will analyze my housing price dataset for New York City’s five boroughs: the Bronx, Brooklyn, Manhattan, Queens, and Staten Island. The dataset contains monthly average housing prices for 2024 and 2025.
+
+## DATA SOURCE
+
+The dataset is a fictional sample I created for this project. It is organized in a wide format, with each borough represented as a separate column. Because the values are simulated, they are useful for practicing data transformations and analysis, but they do not represent actual housing prices.
+
+***N:B “Housing prices are recorded in thousands of U.S. dollars. For example, a value of 1,100 represents \$1,100,000.”***
+
+## PLANNED APPROACH
+
+- **Explore the data** — inspect its structure, review the columns, and check for missing values.
+
+- **Tidy the data** — use `pivot_longer()` to reshape the borough columns into a single borough column and a single price column.
+
+- **Calculate yearly averages** — compare average prices across the five boroughs for 2024 and 2025.
+
+- **Calculate monthly averages** — examine price patterns by month and borough, with the option to filter by year.
+
+- **Measure price changes** — calculate month-over-month and year-over-year growth rates to identify increases and decreases.
+
+- **Visualize the data** — use tables and `ggplot2` charts, including bar and line graphs, to compare prices and trends.
+
+- **Interpret the patterns** — discuss possible reasons for price changes and how the results could inform housing choices, while recognizing that the sample data cannot establish real market causes.
+
+***The results and findings will be presented later in the analysis and conclusion sections.***

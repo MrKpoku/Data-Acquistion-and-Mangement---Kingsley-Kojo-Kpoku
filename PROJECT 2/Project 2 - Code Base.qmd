@@ -1,0 +1,262 @@
+---
+title: "Project 2 - Real Estate in New York"
+author: "Kingsley Kojo Kpoku"
+format: html
+editor: visual
+---
+
+## IMPORT LIBRARIES
+
+```{r}
+library(readr)
+library(dplyr)
+library(tidyr)
+library(scales)
+library(ggplot2)
+```
+
+## IMPORTING THE DATA
+
+```{r}
+
+
+ny_housing <- readr::read_csv("Project 2 - NY_Housing.csv")
+
+ny_housing <- "C:\\Users\\kingk\\OneDrive\\Documents\\CUNY MASTERS PROGRAM-DATA SCIENCE\\Data Acquistion & Management 607\\Assignments\\Project 2\\Project 2 - New York Housing Boroughs.csv"
+
+## Checking the data 
+
+head(ny_housing)
+
+glimpse(ny_housing)
+```
+
+## CONVERTING THE DATA COLUMNS
+
+```{r}
+ny_housing_long <- readr::read_csv(
+  "Project 2 - NY_Housing.csv",
+  show_col_types = FALSE
+) |>
+  dplyr::mutate(
+    dplyr::across(
+      -c(Year, Month),
+      ~ readr::parse_number(as.character(.x))
+    )
+  ) |>
+  tidyr::pivot_longer(
+    cols = -c(Year, Month),
+    names_to = "Borough",
+    values_to = "Average_Price"
+  )
+
+head(ny_housing_long)
+```
+
+## REMOVING NULL VALUES 
+
+```{r}
+colSums(is.na(ny_housing_long))
+
+ny_housing_clean <- ny_housing_long |>
+  dplyr::filter(!is.na(Average_Price))
+
+ny_housing_clean <- na.omit(ny_housing_long)
+
+ny_housing_clean <- ny_housing_long |>
+  dplyr::select(where(~ !all(is.na(.x))))
+
+View(ny_housing_clean)
+
+head(ny_housing_clean)
+```
+
+## MOST EXPENSIVE BOROUGH NY
+
+```{r}
+expensive_borough <- ny_housing_long |>
+  dplyr::group_by(Borough) |>
+  dplyr::summarise(
+    Average_Price = mean(Average_Price, na.rm = TRUE),
+    .groups = "drop"
+  ) |>
+  dplyr::arrange(dplyr::desc(Average_Price))
+
+expensive_borough
+
+## the most expensive borough on average price is manhattan. 
+
+```
+
+## COMPARE YoY GROWTH 
+
+```{r}
+
+yearly_summary <- ny_housing_long |>
+  dplyr::group_by(Year, Borough) |>
+  dplyr::summarise(
+    Average_Price = mean(Average_Price, na.rm = TRUE),
+    .groups = "drop"
+  ) |>
+  dplyr::arrange(Borough, Year) |>
+  dplyr::group_by(Borough) |>
+  dplyr::mutate(
+    YoY_Growth_Rate = (Average_Price / dplyr::lag(Average_Price) - 1) * 100
+  ) |>
+  dplyr::ungroup() |>
+  dplyr::arrange(Year, dplyr::desc(Average_Price))
+
+
+yearly_summary
+
+
+```
+
+## VISUALIZATION - YoY GROWTH RATE
+
+```{r}
+
+ggplot(yearly_summary, aes(x = Borough, y = YoY_Growth_Rate, fill = factor(Borough))) +
+  geom_col(position = "dodge") +
+  labs(
+    title = "YoY_Growth_Rate by Borough and Year",
+    x = "Borough",
+    y = "YoY_Growth_Rate",
+    fill = "Borough"
+  ) +
+  theme_minimal()
+
+## there is an increase in the average prices on the boroughs through the years and what is expected. However based on the YOY Growth rate staten island had the fastest growth rate with 5.4 indicating the resident moved there the most in 2025. Manhattan recorded the least growth rate considering how expensive it is.
+
+```
+
+## COMPARE MONTHLY AVERAGES
+
+```{r}
+month_order <- c(
+  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+)
+
+monthly_summary <- ny_housing_long |>
+  dplyr::mutate(
+    Month = factor(Month, levels = month_order)
+  ) |>
+  dplyr::group_by(Month, Borough) |>
+  dplyr::summarise(
+    Average_Price = mean(Average_Price, na.rm = TRUE),
+    .groups = "drop"
+  ) |>
+  dplyr::arrange(Month, Borough)
+
+monthly_summary
+
+```
+
+## VISUALIZATION - MONTHLY AVERAGES 
+
+```{r}
+
+## GENERAL MONTHLY ANALYSIS
+
+ggplot(
+  monthly_summary,
+  aes(x = Month, y = Average_Price, color = Borough, group = Borough)
+) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 2) +
+  labs(
+    title = "Average Housing Price by Month and Borough",
+    x = "Month",
+    y = "Average Price",
+    color = "Borough"
+  ) +
+  theme_minimal()
+
+
+## 2024 ANALYSIS
+
+month_order <- c(
+  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+)
+
+ny_housing_long |>
+  dplyr::filter(Year == 2024) |>
+  dplyr::mutate(
+    Month = factor(Month, levels = month_order)
+  ) |>
+  dplyr::group_by(Year, Month, Borough) |>
+  dplyr::summarise(
+    Average_Price = mean(Average_Price, na.rm = TRUE),
+    .groups = "drop"
+  ) |>
+  ggplot2::ggplot(
+    ggplot2::aes(
+      x = Month,
+      y = Average_Price,
+      color = Borough,
+      group = Borough
+    )
+  ) +
+  ggplot2::geom_line(linewidth = 1) +
+  ggplot2::geom_point(size = 2) +
+  ggplot2::labs(
+    title = "Average Housing Prices by Month — 2024",
+    x = "Month",
+    y = "Average Price",
+    color = "Borough"
+  ) +
+  ggplot2::theme_minimal()
+
+
+
+## 2025 ANALYSIS
+
+ny_housing_long |>
+  dplyr::filter(.data$Year == 2025) |>
+  dplyr::mutate(
+    Month = factor(
+      Month,
+      levels = c("Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                 "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+    )
+  ) |>
+  dplyr::group_by(Year, Month, Borough) |>
+  dplyr::summarise(
+    Average_Price = mean(Average_Price, na.rm = TRUE),
+    .groups = "drop"
+  ) |>
+  ggplot2::ggplot(
+    ggplot2::aes(
+      x = Month,
+      y = Average_Price,
+      color = Borough,
+      group = Borough
+    )
+  ) +
+  ggplot2::geom_line(linewidth = 1) +
+  ggplot2::geom_point(size = 2) +
+  ggplot2::labs(
+    title = "Average Housing Prices by Month — 2025",
+    x = "Month",
+    y = "Average Price",
+    color = "Borough"
+  ) +
+  ggplot2::theme_minimal()
+
+
+
+
+```
+
+## CONCLUSION AND ANALYTICS FINDING
+
+1.Average housing prices increased across all five boroughs from 2024 to 2025. Staten Island had the highest year-over-year (YoY) growth rate at 5.4%, while Manhattan had the lowest. This shows that prices grew fastest in Staten Island in this dataset; price growth alone does not show that more residents moved there.\
+\
+2. The monthly line graph shows Brooklyn with the highest average prices and the Bronx with the lowest. Prices generally trended upward across the boroughs, although monthly changes varied. These price patterns do not indicate how many people moved to each borough.\
+\
+3. **Real estate Analyst Advice**\
+As a real estate analyst, I would advise customers who are interested in Brooklyn to consider purchasing sooner rather than waiting, because the sample shows its average prices rising over time. However, this is a pattern in the dataset, not a guarantee that prices will continue to rise.\
+\
+Manhattan remains the most expensive borough, as expected, so customers considering it should plan for a higher budget and compare housing options carefully. Staten Island had the highest year-over-year growth rate in the sample, suggesting that its prices increased the fastest from 2024 to 2025 and may continue to attract buyer interest. These recommendations are based on simulated data, so customers should check current market information before making a real purchase.
