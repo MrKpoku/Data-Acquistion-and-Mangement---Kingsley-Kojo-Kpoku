@@ -1,1 +1,7 @@
 
+For this assignment, I chose three books related to real estate. I recorded each book’s title, author or authors, publication year, publisher, and ISBN.
+I created two files containing the same book information:
+- An HTML file with the books arranged in a table.
+- A JSON file with each book’s information stored as labeled fields.
+I then used R in a Quarto document to read both files into separate data frames. I made the column names and title capitalization consistent, then compared the data frames to check whether they contained the same information.
+Finally, I rendered the Quarto document as an HTML report and made the HTML and JSON source files publicly accessible on the web, as required for publishing to RPubs.
