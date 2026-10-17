@@ -1,0 +1,32 @@
+---
+title: "Project 1- Chess Tournament Analysis"
+author: "Kingsley Kojo Kpoku"
+format: html
+editor: visual
+---
+
+## APPROACH
+
+For this project, I will process chess tournament results provided in a structured text file. The file contains player information, including names, states, total points, and pre-tournament ratings, along with each player’s round-by-round opponents. I will use R to organize these details and calculate each player’s average opponent pre-rating.
+
+## DATA SOURCE
+
+The data source is the chess tournament text file provided with the project. Each player’s record spans two lines: one contains the player’s name, total points, and round results; the other contains the player’s state and rating information. I will use this source file to create a CSV containing the player name, state, total points, pre-rating, and average pre-tournament rating of opponents
+
+DATA SOURCE LINK - <https://brightspace.cuny.edu/content/enforced/1404182-SPS01_DATA_607_1269_1_56662/tournamentinfo.txt?ou=1404182>
+
+## PLANNED APPROACH
+
+- **Inspect the source file** — examine its structure and identify how player records, ratings, and round results are arranged.
+
+- **Extract player information** — organize each player’s pair number, name, state, total points, and pre-rating into a Players table.
+
+- **Extract game information** — organize each player’s round and opponent pair number into a Games table.
+
+- **Connect players to opponents** — use pair numbers to match each game’s opponent with that opponent’s pre-tournament rating.
+
+- **Calculate average opponent ratings** — calculate the mean pre-rating of the opponents for each player.
+
+- **Create the required output** — combine the player information and calculated averages, then export the required fields to a CSV file.
+
+- **Document and publish the work** — include the code and explanations in an R Markdown document, make the source data accessible, and publish the report to RPubs.

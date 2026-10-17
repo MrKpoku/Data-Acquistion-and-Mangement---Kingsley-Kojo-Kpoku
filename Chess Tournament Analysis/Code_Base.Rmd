@@ -1,0 +1,156 @@
+---
+title: "Project 1- Chess Tournament Analysis"
+author: "KINGSLEY KPOKU"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+## INSTALLING LIBRARIES
+
+```{r}
+library(dplyr)
+library(stringr)
+```
+
+## READING THE FILE PATH
+
+```{r}
+
+getwd()
+list.files()
+normalizePath(file.choose(), winslash = "/")
+
+tournament_lines <- readLines("C:/Users/kingk/OneDrive/Documents/CUNY MASTERS PROGRAM-DATA SCIENCE/Data Acquistion & Management 607/Assignments/Project 1/tournamentinfo.txt.txt", warn = FALSE)
+
+head(tournament_lines, 20)
+
+```
+
+## CREATE THE PLAYERS TABLE 
+
+```{r}
+player_line_numbers <- which(
+  str_detect(tournament_lines, "^\\s*\\d+\\s*\\|")
+)
+
+split_line <- function(line) {
+  str_trim(str_split(line, fixed("|"))[[1]])
+}
+
+players <- bind_rows(lapply(player_line_numbers, function(i) {
+  player_fields <- split_line(tournament_lines[i])
+  detail_fields <- split_line(tournament_lines[i + 1])
+
+  rating_match <- str_match(detail_fields[2], "R:\\s*(\\d+)")
+
+  data.frame(
+    pair_num = as.integer(player_fields[1]),
+    name = player_fields[2],
+    points = as.numeric(player_fields[3]),
+    state = detail_fields[1],
+    pre_rating = as.integer(rating_match[1, 2])
+  )
+}))
+
+head(players)
+```
+
+## CREATE THE GAMES TABLES
+
+```{r}
+games_list <- list()
+
+for (row_number in player_line_numbers) {
+  player_fields <- split_line(tournament_lines[row_number])
+
+  round_results <- player_fields[4:10]
+  opponent_numbers <- str_extract(round_results, "\\d+")
+
+  games_list[[length(games_list) + 1]] <- data.frame(
+    player_pair = as.integer(player_fields[1]),
+    round = 1:7,
+    opponent_pair = as.integer(opponent_numbers)
+  )
+}
+
+games <- bind_rows(games_list)
+
+games <- games |>
+  filter(!is.na(opponent_pair), opponent_pair > 0)
+
+head(games)
+```
+
+## FINDING OPPONENT RATINGS
+
+```{r}
+games_with_ratings <- games |>
+  left_join(
+    players |>
+      select(pair_num, opponent_pre_rating = pre_rating),
+    by = c("opponent_pair" = "pair_num")
+  )
+
+head(games_with_ratings)
+```
+
+## CALCULATING THE AVERAGE OPPONENT RATING / CREATE REQUIRED CSV
+
+```{r}
+opponent_averages <- games_with_ratings |>
+  group_by(player_pair) |>
+  summarise(
+    average_opponent_rating = mean(opponent_pre_rating, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+final_results <- players |>
+  left_join(
+    opponent_averages,
+    by = c("pair_num" = "player_pair")
+  ) |>
+  transmute(
+    player_name = name,
+    player_state = state,
+    total_number_of_points = points,
+    player_pre_rating = pre_rating,
+    average_pre_chess_rating_of_opponents = average_opponent_rating
+  )
+
+write.csv(
+  final_results,
+  "chess_tournament_summary.csv",
+  row.names = FALSE
+)
+
+head(final_results)
+
+```
+
+
+## CONCLUSION AND ANALYTICAL FINDINGS
+
+
+The tournament data includes 64 players. Their total points ranged from 1.0 to 6.0, with an average of 3.44 points. Three players tied for the highest score of 6.0: Gary Hua, Dakshesh Daruri, and Aditya Bajaj.
+The average pre-tournament rating of each player’s opponents ranged from approximately 1106.6 to 1605.3. Gary Hua faced the highest-rated opposition on average, at approximately 1605.3, and scored 6.0 points. Aditya Bajaj also scored 6.0 points and faced opponents averaging approximately 1563.6. These values describe the opponents each player faced; they do not by themselves explain why a player earned a particular score.
+
+Tournament points show how many points each player earned from their games. Average opponent rating adds context by describing the pre-tournament ratings of the players they faced. The three top scorers all earned 6.0 points, even though their opponents’ average ratings differed. This shows why it is useful to consider both measures together.
+The player who faced the highest average opponent rating did not necessarily earn more points than every other player. These are separate measures: one summarizes game results, while the other summarizes opponents’ pre-tournament ratings. The analysis is descriptive and does not establish that opponent rating caused a particular tournament score.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
