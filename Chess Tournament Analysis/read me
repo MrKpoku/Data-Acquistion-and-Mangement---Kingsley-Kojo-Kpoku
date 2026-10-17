@@ -1,1 +1,1 @@
-
+For this project, I will process chess tournament results provided in a structured text file. The file contains player information, including names, states, total points, and pre-tournament ratings, along with each player’s round-by-round opponents. I will use R to organize these details and calculate each player’s average opponent pre-rating.
