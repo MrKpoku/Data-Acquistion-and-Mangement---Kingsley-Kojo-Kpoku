@@ -1,0 +1,32 @@
+---
+title: "Assignment - Working with HTML and Json"
+author: "Kingsley Kojo Kpoku"
+format: html
+editor: visual
+---
+
+## APPROACH 
+
+For this assignment, I will work with information about three books related to real estate: **The Book on Rental Property Investing,** **The Millionaire Real Estate Investor**, and **The****Complete Idiot’s Guide to Buying a Home**. For each book, I will use its title, author or authors, publication year, publisher, and ISBN.
+
+## DATA SOURCE
+
+I manually organized the book information in two files: an HTML file named `Books.html`, which contains a table, and a JSON file named `Books.json`, which contains the same information as a list of book records. The files are available in my public GitHub repository.
+
+GitHub Repository - <https://github.com/MrKpoku/Data-Acquistion-and-Mangement---Kingsley-Kojo-Kpoku/tree/main/HTML%20and%20JSON>
+
+## PLANNED APPROACH
+
+1.  **Inspect the files** — review the HTML table and JSON structure to understand how the book information is organized.
+
+2.  **Load the HTML data** — use the `rvest` package in R to read the table into a data frame.
+
+3.  **Load the JSON data** — use the `jsonlite` package in R to read the book records into a separate data frame.
+
+4.  **Standardize the data** — make column names, title capitalization, and data types consistent so that R can compare the two data frames fairly.
+
+5.  **Compare the data** — use R to check whether both data frames contain the same book information.
+
+6.  **Present the process** — include the R code and its output in a Quarto report.
+
+***The results of the comparison and any findings will be discussed later in my code base analysis.***

@@ -1,0 +1,83 @@
+---
+title: "Assignment - Working with HTML and Json"
+author: "Kingsley Kojo Kpoku"
+format: html
+editor: visual
+---
+
+## INSTALLING LIBRARIES
+
+```{r}
+library(rvest)
+library(jsonlite)
+
+
+```
+
+## READING HTML / JSON FILES
+
+```{r}
+
+html_page <- read_html("Books.html")
+html_table <- html_element(html_page, "table")
+
+## TURN THE TABLES INTO R DATAFRAME
+
+books_from_html <- html_table(html_table)
+
+books_from_html
+
+## READING THE JSON FILE
+
+books_from_json <- fromJSON("Books.json")
+
+books_from_json
+
+## MAKING BOTH RESULTS AS DATAFRAME
+
+books_from_html <- as.data.frame(books_from_html)
+books_from_json <- as.data.frame(books_from_json)
+
+
+## MAKING EVERY COLUMN AS TEXT IN BOTH DATAFRAMES
+
+books_from_html[] <- lapply(books_from_html, as.character)
+books_from_json[] <- lapply(books_from_json, as.character)
+
+print(books_from_html)
+print(books_from_json)
+
+## COMPARING THE TWO DATAFRAMES
+
+identical(books_from_html, books_from_json)
+
+names(books_from_html)
+names(books_from_json)
+
+## after comparing i observed that the html file has the column headers in uppercase while the json file has it in lowercase and since i prefer uppercase i am going to convert the json to uppercase 
+
+
+```
+
+## MAKING BOTH DATAFRAMES UPPERCASE
+
+```{r}
+names(books_from_html) <- toupper(names(books_from_html))
+names(books_from_json) <- toupper(names(books_from_json)) 
+
+```
+
+## COMPARING THE DATAFAMES - CONFIRMATION
+
+```{r}
+identical(books_from_html, books_from_json)
+
+names(books_from_html)
+names(books_from_json)
+```
+
+## CONCLUSION AND FINDINGS
+
+In this assignment, I created HTML and JSON files containing information about three real estate books. I used R to read the information from each file into a data frame. At first, the column headings were formatted differently: the HTML headings began with capital letters, while the JSON headings were lowercase. I changed the headings to a consistent format so R could compare the data correctly. I also made the book titles uppercase in both data frames.
+
+After these changes, I compared the two data frames to check whether they contained the same information. This assignment helped me understand how HTML tables and JSON files organize data, and how R can read and compare information stored in different formats.
