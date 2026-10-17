@@ -1,0 +1,40 @@
+---
+title: "Week 3B - Approach"
+author: "Kingsley Kojo Kpoku"
+format: html
+editor: visual
+---
+
+## APPROACH
+
+In this assignment, I used historical stock-price data for Tesla (TSLA) and NVIDIA (NVDA). The data was provided in separate Excel files. I imported the datasets into R, selected the stock closing price, cleaned and organized the date information, and combined the two datasets into one dataset.
+
+I used R and the `dplyr`, `lubridate`, and `slider` packages to perform the analysis. I used window functions to calculate two measures: the **year-to-date (YTD) average** and the **six-day moving average** for each stock.
+
+The YTD average calculates the average stock price from the beginning of each year up to each date. The six-day moving average calculates the average stock price using the current trading day and the previous five trading days. These calculations allow me to examine how the stock prices change over time while keeping Tesla and NVIDIA as separate items.
+
+Data Source (Kaggle) - <https://www.kaggle.com/datasets/sinankr/tech-stocks-dataset>
+
+## RESEARCH QUESTIONS
+
+- **What is the year-to-date average stock price for Tesla and NVIDIA over time?**
+
+<!-- -->
+
+-  **What is the six-day moving average for Tesla and NVIDIA?**
+
+<!-- -->
+
+-  **How does the six-day moving average compare with the actual closing price of each stock?**
+
+<!-- -->
+
+-  **How can window functions be used to analyze stock-price trends for multiple items over time?**
+
+## CONCLUSION AND ANALYTICS FINDINGS
+
+This assignment demonstrated how window functions can be used to analyze time-series stock data in R. Using Tesla and NVIDIA historical stock prices, I calculated both year-to-date averages and six-day moving averages.
+
+The YTD average provided a cumulative measure of each stock's performance throughout each year, while the six-day moving average provided a shorter-term view of price movement. Using `group_by()` allowed the calculations to be performed separately for Tesla and NVIDIA.
+
+Overall, this analysis helped me understand how window functions can be applied to time-series data while keeping the original row-level observations.
